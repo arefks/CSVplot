@@ -59,8 +59,7 @@ for key in anatomical_data:
     dd = dd +1
     DataSNR = pd.concat([DataSNR, temp_data], ignore_index=True)
 
-
-#%%
+#%% creating boxplots
 plt.figure(figsize=(30, 10))
 sns.set_style('white')
 palette = 'Set2'
@@ -85,7 +84,7 @@ ax.set_ylim(ylim)
 ax.legend_.remove()
 plt.savefig(os.path.join(Path,"FIGX.svg"), format='svg', bbox_inches='tight')
 plt.show()    
-#%%
+#%% Creating Heatmaps significance
 
 # Example data (replace with your data)
 # ... (assuming DataSNR and groups are already defined)
@@ -117,7 +116,7 @@ plt.tight_layout()
 plt.savefig(os.path.join(Path,"HEATMAP_pairwiseComparison.svg"), format='svg', bbox_inches='tight')
 plt.show()
 
-#%%
+#%% Creating and saving table with signifcances
 
 # Example data (replace with your data)
 # ... (assuming DataSNR and groups are already defined)
