@@ -151,8 +151,8 @@ for dd,data in enumerate(All_Data):
 #%% Data statistics figure 6
 
 
-p_address = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\docs\AIDAqc_Testdaten.csv"
-p_save = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\PieChart"
+p_address = r"Y:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\AIDAqc_Testdaten.csv"
+p_save = r"Y:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\PieChart"
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -210,102 +210,58 @@ plt.show()
 
 #%% SNR Chang vs Standard plot
 
-p_address = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94_m_As\calculated_features\caculated_features_anatomical.csv"
-p_save = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\ChangVSStandard"
+p_address = r"Y:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\calculated_features\caculated_features_anatomical.csv"
+#p_save = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\ChangVSStandard"
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import re
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.stats import ttest_ind, f_oneway
-import glob
-import os
-from scipy.stats import ttest_ind
-from statsmodels.stats.multitest import multipletests
-import re
 
+cm = 1/2.54  # centimeters in inches
 # Set the color palette to 'Set2'
-sns.set(font='Times New Roman', font_scale=0.8, palette="Set2")
 
-
-
-
+plt.figure(figsize=(18*cm/3,7.30*cm),dpi=300)
 # Load the CSV data into a pandas DataFrame
 data = pd.read_csv(p_address)
 chang = data["SNR Chang"].to_frame().rename(columns={"SNR Chang": "SNR"})
 normal = data["SNR Normal"].to_frame().rename(columns={"SNR Normal": "SNR"})
-cm = 1/2.54  # centimeters in inches
+
 
 chang["type"] = "chang"
 normal["type"] = "normal"
 
-SNR = pd.concat([chang,normal])
+Data_merged = data[["SNR Chang","SNR Normal"]]
+Data_merged.rename(columns={"SNR Normal":"SNR-standard"})
+
+SNR = pd.concat([chang, normal])
 tips = SNR
-x="type"
-y="SNR"
+x = "type"
+y = "SNR"
+sns.set_style('ticks')
+# Create circular marker style for left side
+circle_marker = {"marker": "o", "markerfacecolor": "black", "markersize": 3}
 
 
-
-# Load some example data
 #tips = sns.load_dataset("tips")
-ax = sns.barplot(
-    data=tips, 
-    x=x, 
-    y=y, 
-    hue=x, 
-    alpha=0.7, 
-)
+plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['font.size'] = 8
+plt.title("(c) Chang vs Standard SNR",weight='bold')
+ax=sns.barplot(x="type", y="SNR", data=tips, capsize=0,palette="Set2",errorbar="se",ci=None)
+#sns.swarmplot(x="type", y="SNR", data=tips, color="0", alpha=.5)
+for i in range(len(Data_merged)):
+    plt.plot(["SNR Normal", "SNR-standard"], Data_merged.iloc[i], color="black", **circle_marker,linewidth=0.5)
 
-# Get the legend from just the bar chart
-handles, labels = ax.get_legend_handles_labels()
+ax.spines['top'].set_linewidth(0)  # Top border
+ax.spines['right'].set_linewidth(0)  # Right border
+ax.spines['bottom'].set_linewidth(0.5)  # Bottom border
+ax.spines['left'].set_linewidth(0.5)  # Left border
+# Set the font to Times New Roman and font size to 8 points
 
-# Draw the stripplot
-sns.stripplot(
-    data=tips, 
-    x=x, 
-    y=y, 
-    hue=x, 
-    dodge=True, 
-    edgecolor="black", 
-    linewidth=.75,
-    ax=ax,
-)
-# Remove the old legend
-ax.legend_.remove()
-# Add just the bar chart legend back
-ax.legend(
-    handles,
-    labels,
-    loc=7,
-    bbox_to_anchor=(1.25, .5),
-)
+# Rest of your code...
+ax.set_xlabel('')
+ax.tick_params(axis='both', which='both', width=0.5,color='gray',length=2)
+plt.show()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-            
-            
-            
-            
-            
-            
-            
