@@ -382,7 +382,7 @@ import numpy as np
 
 cm = 1/2.54  # centimeters in inches
 # Specify the path to your Excel file
-excel_file_path = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\Chang&normal_all.xlsx"
+excel_file_path = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\Chang&normal_all.xlsx"
 plt.figure(figsize=(8*cm,8*cm),dpi=300)
 # Read the data into a pandas DataFrame
 df = pd.read_excel(excel_file_path, engine='openpyxl')
@@ -411,7 +411,7 @@ sns.set_style('whitegrid')
 
 # Create a scatter plot
 #ax=sns.scatterplot(data=df, x='SNR-Chang', y='SNR-Standard',palette="gray_r",s=7)
-ax=sns.scatterplot(data=df, x='SNR-Chang', y='SNR-Standard',hue="Dataset",palette="Spectral",s=7)
+ax=sns.scatterplot(data=df, x='SNR-Chang', y='SNR-Standard',hue="Dataset",palette="Spectral_r",s=7)
 
 
 
@@ -433,5 +433,44 @@ legend.get_title().set_fontfamily('Times New Roman')
 for text in legend.get_texts():
     text.set_fontfamily('Times New Roman')
 
+#ax.legend_.remove()
 plt.show()
 
+#%% Plot all chang vs normal and corrolate 0 to 50 and 50 to end
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import scipy.stats as stats
+import numpy as np
+
+
+cm = 1/2.54  # centimeters in inches
+# Specify the path to your Excel file
+excel_file_path = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\Chang&normal_all.xlsx"
+plt.figure(figsize=(8*cm,8*cm),dpi=300)
+# Read the data into a pandas DataFrame
+df = pd.read_excel(excel_file_path, engine='openpyxl')
+
+# Drop rows with NaN values in the specified columns
+#df = df.dropna(subset=['SNR-Chang (dB)', 'SNR-Standard (dB)'])
+
+df['SNR-Chang'] = df['SNR-Chang'].apply(lambda x: np.power(10,x/20))
+df['SNR-Standard'] = df['SNR-Standard'].apply(lambda x: np.power(10,x/20))
+
+df = df.sort_values('sort')
+
+
+filtered_df = df[df['Dataset'].isin(['94_m_We', '94_m_Va'])]
+
+plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['font.size'] = 8
+plt.title("All anatomical data",weight='bold')
+
+# Create two dataframes, one for values smaller than 50 and another for values 50 or greater
+df_smaller_than_50 = df[df['SNR-Chang'] < 60 & df['SNR-Standard'] < 75]
+
+# Calculate the correlation and p-value for the group where 'SNR-Chang' < 50
+correlation_smaller_than_50, p_value_smaller_than_50 = stats.spearmanr(df_smaller_than_50['SNR-Chang'], df_smaller_than_50['SNR-Standard'], nan_policy='omit', alternative='two-sided')
+print("Correlation:", correlation_smaller_than_50)
+print("P-value:", p_value_smaller_than_50)
