@@ -6,7 +6,6 @@ Created on Fri Sep  1 17:57:59 2023
 """
 
 import glob
-import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,9 +17,9 @@ from scipy.stats import ttest_ind
 from statsmodels.stats.multitest import multipletests
 import re
 
-#%%
+#%
 
-
+cm = 1/2.54  # centimeters in inches
 
 Path = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\manual_slice_inspection"
 
@@ -36,7 +35,10 @@ count_anat_all = len(anat_all)
 count_func_all = len(func_all)
 count_struct_all = len(struct_all)
 
-Path_gt = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\validation_expert"
+#%% Expert
+
+
+Path_gt = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\validation_experienced"
 
 pgt_anat = os.path.join(Path_gt,"anat*.png")
 pgt_func = os.path.join(Path_gt,"func*.png")
@@ -58,6 +60,9 @@ countgt_struct_bad = len(structgt_all)
 countgt_anat_good = count_anat_all - countgt_anat_bad
 coungt_func_good = count_func_all-coungt_func_bad
 countgt_struct_good = count_struct_all-countgt_struct_bad
+
+
+
 
 
 
@@ -101,26 +106,45 @@ anat_FN = countqc_anat_bad - anat_TN
 anat_FP = countgt_anat_bad - anat_TN
 anat_TP = countgt_anat_good - anat_FN
 
+anat_percent_TP = (anat_TP / countgt_anat_good)
+anat_percent_FN = (1 - anat_percent_TP)
+anat_percent_FP = (anat_FP /countgt_anat_bad)
+anat_percent_TN = (1 - anat_percent_FP)
 
 
-# Define the confusion matrix values with rearranged positions
-confusion_matrix = [[anat_TP, anat_FN],
-                    [anat_FP, anat_TN]]
+# Calculate precision
+precision = anat_TP / (anat_TP + anat_FP)
+# Calculate recall
+recall = anat_TP / (anat_TP + anat_FN)
 
+# Calculate F1 score
+f1_score = 2 * (precision * recall) / (precision + recall)
+
+# Print the F1 score
+print("F1 Score:", f1_score)
+
+#%%
+confusion_matrix = [[anat_percent_TP, anat_percent_FN],
+                    [anat_percent_FP, anat_percent_TN]]
+
+plt.figure(figsize=(6*cm, 6*cm), dpi=300)
 # Create a heatmap using Seaborn
-sns.set(font_scale=1.4)  # Adjust the font size
-heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=False, yticklabels=False, cbar=False)
+sns.set(font_scale=0.8)  # Adjust the font size
+heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='.2%', cmap='Greys',
+                      annot_kws={"fontname": "Times New Roman"},
+                      xticklabels=False, yticklabels=False, cbar=False)
 
 # Customize the plot
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
-plt.title('Confusion Matrix')
-plt.xticks([0.5, 1.5], ['Positive', 'Negative'])
-plt.yticks([0.5, 1.5], ['Positive', 'Negative'])
+plt.xlabel('AIDAqc', fontname='Times New Roman')
+plt.ylabel('Expert User', fontname='Times New Roman')
+plt.title('Anatomical data \n F1-Score: %.2f' % f1_score + "", fontname='Times New Roman',weight="bold")
+plt.xticks([0.5, 1.5], ['good image', 'bad image'], fontname='Times New Roman')
+plt.yticks([0.5, 1.5], ['good image', 'bad image'], fontname='Times New Roman')
+
+plt.show()
+
 
 
 
 # Show the plot
 plt.show()
-
-
