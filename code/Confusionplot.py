@@ -19,54 +19,10 @@ import re
 
 #%
 
-cm = 1/2.54  # centimeters in inches
-
-Path = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\manual_slice_inspection"
-
-p_anat = os.path.join(Path,"anat*.png")
-p_func = os.path.join(Path,"func*.png")
-p_struct = os.path.join(Path,"struct*.png")
-
-anat_all = glob.glob(p_anat,recursive=True)
-func_all = glob.glob(p_func,recursive=True)
-struct_all = glob.glob(p_struct,recursive=True)
-
-count_anat_all = len(anat_all)
-count_func_all = len(func_all)
-count_struct_all = len(struct_all)
 
 #%% Expert
 
-
-Path_gt = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\validation_experienced"
-
-pgt_anat = os.path.join(Path_gt,"anat*.png")
-pgt_func = os.path.join(Path_gt,"func*.png")
-pgt_struct = os.path.join(Path_gt,"struct*.png")
-
-anatgt_all = glob.glob(pgt_anat,recursive=True)
-funcgt_all = glob.glob(pgt_func,recursive=True)
-structgt_all = glob.glob(pgt_struct,recursive=True)
-# Update the lists to contain only the image names (file names)
-anatgt_all = [os.path.basename(path) for path in anatgt_all]
-funcgt_all = [os.path.basename(path) for path in funcgt_all]
-structgt_all = [os.path.basename(path) for path in structgt_all]
-
-
-countgt_anat_bad = len(anatgt_all)
-coungt_func_bad = len(funcgt_all)
-countgt_struct_bad = len(structgt_all)
-
-countgt_anat_good = count_anat_all - countgt_anat_bad
-coungt_func_good = count_func_all-coungt_func_bad
-countgt_struct_good = count_struct_all-countgt_struct_bad
-
-
-
-
-
-
-Path_votings = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\votings.csv"
+Path_votings = r"C:\Users\arefk\OneDrive\Desktop\Projects\validation\*\votings.csv"
 
 All_csv_votings = glob.glob(Path_votings)
 
@@ -87,64 +43,92 @@ for df_name, df in All_values.items():
         img_values.extend(df["corresponding_img"].tolist())
 
 new_df = pd.DataFrame({"corresponding_img": img_values})
-# Separate the new_df DataFrame based on specific prefixes
-anatqc_all = new_df[new_df['corresponding_img'].str.startswith('anatomical')]['corresponding_img'].tolist()
-structqc_all = new_df[new_df['corresponding_img'].str.startswith('structural')]['corresponding_img'].tolist()
-funcqc_all = new_df[new_df['corresponding_img'].str.startswith('functional')]['corresponding_img'].tolist()
 
-countqc_anat_bad = len(anatqc_all)
-counqc_func_bad = len(structqc_all)
-countqc_struct_bad = len(funcqc_all)
+MU_strings = ["beginner","experienced","expert"]
+Sequence_type = ["anatomical","functional","structural"]
+cc=0
+cm = 1/2.54  # centimeters in inches
 
-countqc_anat_good = count_anat_all - countqc_anat_bad
-counqc_func_good = count_func_all-counqc_func_bad
-countqc_struct_good = count_struct_all-countqc_struct_bad
+plt.figure(figsize=(18*cm, 18*cm), dpi=300)
+fig, ax = plt.subplots(3,3)
+#fig.suptitle('Confusion matrix',fontname='Times New Roman')
+        
 
-anat_intersect_qc_gt = set(anatgt_all) & set(anatqc_all)
-anat_TN = len(anat_intersect_qc_gt)
-anat_FN = countqc_anat_bad - anat_TN
-anat_FP = countgt_anat_bad - anat_TN
-anat_TP = countgt_anat_good - anat_FN
+for mu,MU in enumerate(MU_strings):
+    for ss,S in enumerate(Sequence_type):
+        
+        Path = r"C:\Users\arefk\OneDrive\Desktop\Projects\validation\*\manual_slice_inspection"
+        
+        p_afs = os.path.join(Path,S+"*.png")
+        
+        afs_all = glob.glob(p_afs,recursive=True)
+        
+        count_afs_all = len(afs_all)
+        
 
-anat_percent_TP = (anat_TP / countgt_anat_good)
-anat_percent_FN = (1 - anat_percent_TP)
-anat_percent_FP = (anat_FP /countgt_anat_bad)
-anat_percent_TN = (1 - anat_percent_FP)
+        Path_gt = r"C:\Users\arefk\OneDrive\Desktop\Projects\validation\*\validation_" + MU
+        pgt_afs = os.path.join(Path_gt, S+"*.png")
+        
+        afsgt_all = glob.glob(pgt_afs,recursive=True)
+        
+        afsgt_all = [os.path.basename(path) for path in afsgt_all]
+        
+        countgt_afs_bad = len(afsgt_all)
+        
+        countgt_afs_good = count_afs_all - countgt_afs_bad
+        
+        
+        
+        
+        
+        # Separate the new_df DataFrame based on specific prefixes
+        afsqc_all = new_df[new_df['corresponding_img'].str.startswith(S)]['corresponding_img'].tolist()
+        
+        countqc_afs_bad = len(afsqc_all)
+        countqc_afs_good = count_afs_all - countqc_afs_bad
+        
+        
+        afs_intersect_qc_gt = set(afsgt_all) & set(afsqc_all)
+        afs_TN = len(afs_intersect_qc_gt)
+        afs_FN = countqc_afs_bad - afs_TN
+        afs_FP = countgt_afs_bad - afs_TN
+        afs_TP = countgt_afs_good - afs_FN
+        
+        afs_percent_TP = (afs_TP / countgt_afs_good)
+        afs_percent_FN = (1 - afs_percent_TP)
+        afs_percent_FP = (afs_FP /countgt_afs_bad)
+        afs_percent_TN = (1 - afs_percent_FP)
+        
+        
+        # Calculate precision
+        precision = afs_TP / (afs_TP + afs_FP)
+        # Calculate recall
+        recall = afs_TP / (afs_TP + afs_FN)
+        
+        # Calculate F1 score
+        f1_score = 2 * (precision * recall) / (precision + recall)
+        
+        # Print the F1 score
+        print("F1 Score:", f1_score)
 
-
-# Calculate precision
-precision = anat_TP / (anat_TP + anat_FP)
-# Calculate recall
-recall = anat_TP / (anat_TP + anat_FN)
-
-# Calculate F1 score
-f1_score = 2 * (precision * recall) / (precision + recall)
-
-# Print the F1 score
-print("F1 Score:", f1_score)
-
-#%%
-confusion_matrix = [[anat_percent_TP, anat_percent_FN],
-                    [anat_percent_FP, anat_percent_TN]]
-
-plt.figure(figsize=(6*cm, 6*cm), dpi=300)
-# Create a heatmap using Seaborn
-sns.set(font_scale=0.8)  # Adjust the font size
-heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='.2%', cmap='Greys',
-                      annot_kws={"fontname": "Times New Roman"},
-                      xticklabels=False, yticklabels=False, cbar=False)
-
-# Customize the plot
-plt.xlabel('AIDAqc', fontname='Times New Roman')
-plt.ylabel('Expert User', fontname='Times New Roman')
-plt.title('Anatomical data \n F1-Score: %.2f' % f1_score + "", fontname='Times New Roman',weight="bold")
-plt.xticks([0.5, 1.5], ['good image', 'bad image'], fontname='Times New Roman')
-plt.yticks([0.5, 1.5], ['good image', 'bad image'], fontname='Times New Roman')
-
-plt.show()
-
-
-
-
+#%
+        confusion_matrix = [[afs_percent_TP, afs_percent_FN],
+                            [afs_percent_FP, afs_percent_TN]]
+        
+        
+        # Create a heatmap using Seaborn
+        sns.set(font_scale=0.8)  # Adjust the font size
+        heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='.2%', cmap='Greys',
+                              annot_kws={"fontname": "Times New Roman"},
+                              xticklabels=False, yticklabels=False, cbar=False,ax=ax[ss,mu])
+        ax[ss, mu].set_xlabel('AIDAqc', fontname='Times New Roman')
+        ax[ss, mu].set_ylabel(MU, fontname='Times New Roman')
+        ax[ss, mu].set_title(S.capitalize()+'\n F1-score: %.2f' % f1_score + "", fontname='Times New Roman', weight="bold")
+        ax[ss, mu].set_xticks([0.5, 1.5])
+        ax[ss, mu].set_xticklabels(['good', 'bad'], fontname='Times New Roman')
+        ax[ss, mu].set_yticks([0.5, 1.5])
+        ax[ss, mu].set_yticklabels(['good', 'bad'], fontname='Times New Roman',rotation=90)
 # Show the plot
+plt.subplots_adjust(left=0.00, right=1, top=1, bottom=0.00, wspace=0.3, hspace=1.1)
+#plt.tight_layout()
 plt.show()
