@@ -28,7 +28,7 @@ def calculate_and_display_fleiss_kappa(data):
 
 #%% Expert
 
-Path_votings = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\votings.csv"
+Path_votings = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94_r_We\votings.csv"
 
 All_csv_votings = glob.glob(Path_votings)
 
@@ -36,7 +36,7 @@ def read_csv_files(files):
     data_dict = {}
     for ff,file in enumerate(files):
         df = pd.read_csv(file)    
-        data_dict[ff] = df[df["Voting outliers (from 5)"]>1] 
+        data_dict[ff] = df[df["Voting outliers (from 5)"]>0] 
             
     return data_dict
 
@@ -63,7 +63,7 @@ Matric_sequneces = []
 for ss,S in enumerate(Sequence_type):
     for mu,MU in enumerate(MU_strings):
         
-        Path = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\manual_slice_inspection"
+        Path = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94_r_We\manual_slice_inspection"
         
         p_afs = os.path.join(Path,S+"*.png")
         
@@ -74,7 +74,7 @@ for ss,S in enumerate(Sequence_type):
         count_afs_all = len(afs_all)
         
 
-        Path_gt = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\validation_" + MU
+        Path_gt = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94_r_We\validation_" + MU
         pgt_afs = os.path.join(Path_gt, S+"*.png")
         
         afsgt_all = glob.glob(pgt_afs,recursive=True)
