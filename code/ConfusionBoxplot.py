@@ -35,7 +35,7 @@ def read_csv_files(files):
     return data_dict
 #%% Expert
 
-Path_votings = r"C:\Users\arefk\OneDrive\Desktop\Projects\validation\*\votings.csv"
+Path_votings = r"C:\Users\aswen\Desktop\validation\*\votings.csv"
 #P = r"C:\Users\arefk\OneDrive\Desktop\Projects\validation\7_m_Br\votings.csv"
 
 
@@ -45,7 +45,7 @@ for aa in All_csv_votings:
     
     temp = glob.glob(aa)
     All_values = read_csv_files(temp)  
-    
+    print(temp)
     
     img_values = []
     
@@ -103,35 +103,37 @@ for aa in All_csv_votings:
             # Separate the new_df DataFrame based on specific prefixes
             afsqc_all = new_df[new_df['corresponding_img'].str.startswith(S)]['corresponding_img'].tolist()
             
+                     
             countqc_afs_bad = len(afsqc_all)
             countqc_afs_good = count_afs_all - countqc_afs_bad
             
             
             afs_intersect_qc_gt = set(afsgt_all) & set(afsqc_all)
-            afs_TN = len(afs_intersect_qc_gt)
-            afs_FN = countqc_afs_bad - afs_TN
-            afs_FP = countgt_afs_bad - afs_TN
-            afs_TP = countgt_afs_good - afs_FN
+    # =============================================================================
+    #         afs_TN = len(afs_intersect_qc_gt)
+    #         afs_FN = countqc_afs_bad - afs_TN
+    #         afs_FP = countgt_afs_bad - afs_TN
+    #         afs_TP = countgt_afs_good - afs_FN
+    # =============================================================================
+            afs_TP = len(afs_intersect_qc_gt)
+            afs_FN = countgt_afs_bad - afs_TP
+            afs_FP = countqc_afs_bad - afs_TP
+            afs_TN = countgt_afs_good - afs_FP
             
     # =============================================================================
-    #         afs_percent_TP = (afs_TP / countgt_afs_good)
-    #         afs_percent_FN = (1 - afs_percent_TP)
-    #         afs_percent_FP = (afs_FP /countgt_afs_bad)
-    #         afs_percent_TN = (1 - afs_percent_FP)
+            afs_percent_TP = (afs_TP / countgt_afs_bad)
+            afs_percent_FN = (1 - afs_percent_TP)
+            afs_percent_FP = (afs_FP /countgt_afs_good)
+            afs_percent_TN = (1 - afs_percent_FP)
     # =============================================================================
             
             
             # Calculate precision
             precision = afs_TP / (afs_TP + afs_FP)
+
             # Calculate recall
-            if (afs_TP+afs_FN)==0:
-                print("fuck that precsion and recall " + MU + "and " + S)
-                continue
-            
             recall = afs_TP / (afs_TP + afs_FN)
-            if (recall+precision)==0:
-                print("fuck that precsion and recall " + MU + "and " + S)
-                continue
+
             
             # Calculate F1 score
             f1_score = 2 * (precision * recall) / (precision + recall)
@@ -139,20 +141,14 @@ for aa in All_csv_votings:
             # Print the F1 score
             print("F1 Score:", f1_score)
     
-    # =============================================================================
-    #         
-    #         confusion_matrix = [[afs_percent_TP, afs_percent_FN],
-    #                             [afs_percent_FP, afs_percent_TN]]
-    #         
-    # =============================================================================
-            confusion_matrix = [[afs_TP, afs_FN],
-                        [afs_FP, afs_TN]]
-    
             
+            confusion_matrix = [[afs_percent_TP, afs_percent_FN],
+                                 [afs_percent_FP, afs_percent_TN]]
+                
             
             # Create a heatmap using Seaborn
             sns.set(font_scale=0.8)  # Adjust the font size
-            heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Greys',
+            heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='.2%', cmap='Greys',
                                   annot_kws={"fontname": "Times New Roman"},
                                   xticklabels=False, yticklabels=False, cbar=False,ax=ax[ss,mu])
             ax[ss, mu].set_xlabel('AIDAqc', fontname='Times New Roman')
@@ -226,7 +222,7 @@ for aa in All_csv_votings:
                 if col1 != col2:
                     kappa_score = cohen_kappa_score(df[col1], df[col2])
                     print(f"Cohen's Kappa Score for {Sequence_type[i]} and between {col1} and {col2}: {kappa_score:.4f}")
-                    text.append(f"Cohen's Kappa Score for {Sequence_type[i]} and between {col1} and {col2}: {kappa_score:.4f}")
+                    text.append(f"Cohen's Kappa Score for {Sequence_type[i]} and {aa} between {col1} and {col2}: {kappa_score:.4f}")
         print()
     
     

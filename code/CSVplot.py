@@ -382,8 +382,8 @@ import numpy as np
 
 cm = 1/2.54  # centimeters in inches
 # Specify the path to your Excel file
-excel_file_path = r"Y:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\Chang&normal_all.xlsx"
-plt.figure(figsize=(8*cm,8*cm),dpi=300)
+excel_file_path = r"C:\Users\aswen\Desktop\validation\Chang&normal_all.xlsx"
+plt.figure(figsize=(10*cm,10*cm),dpi=300)
 # Read the data into a pandas DataFrame
 df = pd.read_excel(excel_file_path, engine='openpyxl')
 

@@ -28,7 +28,7 @@ def calculate_and_display_fleiss_kappa(data):
 
 #%% Expert
 
-Path_votings = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\votings.csv"
+Path_votings = r"C:\Users\aswen\Desktop\validation\*\votings.csv"
 
 All_csv_votings = glob.glob(Path_votings)
 
@@ -36,7 +36,7 @@ def read_csv_files(files):
     data_dict = {}
     for ff,file in enumerate(files):
         df = pd.read_csv(file)    
-        data_dict[ff] = df[df["Voting outliers (from 5)"]>1] 
+        data_dict[ff] = df[df["Voting outliers (from 5)"]>0] 
             
     return data_dict
 
@@ -50,20 +50,21 @@ for df_name, df in All_values.items():
 
 new_df = pd.DataFrame({"corresponding_img": img_values})
 
-MU_strings = ["beginner","experienced","expert"]
+MU_strings = ["experienced","expert"]
+Namesy = ["Pre-qc review","Post-qc review"]
 Sequence_type = ["anatomical","functional","structural"]
 cc=0
 cm = 1/2.54  # centimeters in inches
 
 plt.figure(figsize=(18*cm, 9*cm))
-fig, ax = plt.subplots(3,3, dpi=300,figsize=(12*cm, 12*cm))#,sharex="row",sharey="row")
+fig, ax = plt.subplots(2,3, dpi=300,figsize=(18*cm, 9*cm))#,sharex="row",sharey="row")
 #fig.suptitle('Confusion matrix',fontname='Times New Roman')
         
 Matric_sequneces = []
 for ss,S in enumerate(Sequence_type):
     for mu,MU in enumerate(MU_strings):
         
-        Path = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\manual_slice_inspection"
+        Path = r"C:\Users\aswen\Desktop\validation\*\manual_slice_inspection"
         
         p_afs = os.path.join(Path,S+"*.png")
         
@@ -74,7 +75,7 @@ for ss,S in enumerate(Sequence_type):
         count_afs_all = len(afs_all)
         
 
-        Path_gt = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\validation_" + MU
+        Path_gt = r"C:\Users\aswen\Desktop\validation\*\validation_" + MU
         pgt_afs = os.path.join(Path_gt, S+"*.png")
         
         afsgt_all = glob.glob(pgt_afs,recursive=True)
@@ -97,49 +98,61 @@ for ss,S in enumerate(Sequence_type):
         
         
         afs_intersect_qc_gt = set(afsgt_all) & set(afsqc_all)
-        afs_TN = len(afs_intersect_qc_gt)
-        afs_FN = countqc_afs_bad - afs_TN
-        afs_FP = countgt_afs_bad - afs_TN
-        afs_TP = countgt_afs_good - afs_FN
+# =============================================================================
+#         afs_TN = len(afs_intersect_qc_gt)
+#         afs_FN = countqc_afs_bad - afs_TN
+#         afs_FP = countgt_afs_bad - afs_TN
+#         afs_TP = countgt_afs_good - afs_FN
+# =============================================================================
+        afs_TP = len(afs_intersect_qc_gt)
+        afs_FN = countgt_afs_bad - afs_TP
+        afs_FP = countqc_afs_bad - afs_TP
+        afs_TN = countgt_afs_good - afs_FP
         
-        afs_percent_TP = (afs_TP / countgt_afs_good)
+# =============================================================================
+        afs_percent_TP = (afs_TP / countgt_afs_bad)
         afs_percent_FN = (1 - afs_percent_TP)
-        afs_percent_FP = (afs_FP /countgt_afs_bad)
+        afs_percent_FP = (afs_FP /countgt_afs_good)
         afs_percent_TN = (1 - afs_percent_FP)
+# =============================================================================
         
         
         # Calculate precision
         precision = afs_TP / (afs_TP + afs_FP)
+        #print("precision"+str(precision))
         # Calculate recall
         recall = afs_TP / (afs_TP + afs_FN)
+        #print("recall:"+str(recall))
         
         # Calculate F1 score
         f1_score = 2 * (precision * recall) / (precision + recall)
         
         # Print the F1 score
-        print("F1 Score:", f1_score)
+        #print("F1 Score:", f1_score)
 
         
         confusion_matrix = [[afs_percent_TP, afs_percent_FN],
-                            [afs_percent_FP, afs_percent_TN]]
-        
-        confusion_matrix = [[afs_TP, afs_FN],
-                    [afs_FP, afs_TN]]
-
+                             [afs_percent_FP, afs_percent_TN]]
+# =============================================================================
+#         Per = afs_TP + afs_FN+afs_FP +afs_TN
+#         confusion_matrix = [[afs_TP/Per, afs_FN/Per],
+#                     [afs_FP/Per, afs_TN/Per]]
+# 
+# =============================================================================
         
         
         # Create a heatmap using Seaborn
         sns.set(font_scale=0.8)  # Adjust the font size
-        heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Greys',
+        heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='.2%', cmap='Greys',
                               annot_kws={"fontname": "Times New Roman"},
-                              xticklabels=False, yticklabels=False, cbar=False,ax=ax[ss,mu])
-        ax[ss, mu].set_xlabel('AIDAqc', fontname='Times New Roman')
-        ax[ss, mu].set_ylabel(MU, fontname='Times New Roman')
-        ax[ss, mu].set_title(S.capitalize()+'\n F1-score: %.2f' % f1_score + "", fontname='Times New Roman', weight="bold")
-        ax[ss, mu].set_xticks([0.5, 1.5])
-        ax[ss, mu].set_xticklabels(['good', 'bad'], fontname='Times New Roman')
-        ax[ss, mu].set_yticks([0.5, 1.5])
-        ax[ss, mu].set_yticklabels(['good', 'bad'], fontname='Times New Roman',rotation=90)
+                              xticklabels=False, yticklabels=False, cbar=False,ax=ax[mu,ss])
+        ax[mu, ss].set_xlabel('AIDAqc', fontname='Times New Roman')
+        ax[mu, ss].set_ylabel(Namesy[mu], fontname='Times New Roman')
+        ax[mu, ss].set_title(S.capitalize()+'\n F1-score: %.2f' % f1_score + "", fontname='Times New Roman', weight="bold")
+        ax[mu, ss].set_xticks([0.5, 1.5])
+        ax[mu, ss].set_xticklabels(['bad', 'good'], fontname='Times New Roman')
+        ax[mu, ss].set_yticks([0.5, 1.5])
+        ax[mu, ss].set_yticklabels(['bad', 'good'], fontname='Times New Roman',rotation=90)
         
         
         
@@ -172,7 +185,7 @@ Stacked_func_bool = Stacked_func.astype(bool)
 Stacked_struct_bool = Stacked_struct.astype(bool)
 
 # Define column labels
-column_labels = ["beginner", "experienced", "expert", "aidaqc"]
+column_labels = ["experienced", "expert", "aidaqc"]
 
 # Create pandas DataFrames
 df_anat = pd.DataFrame(Stacked_anat_bool, columns=column_labels)
