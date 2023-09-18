@@ -18,7 +18,7 @@ from statsmodels.stats.multitest import multipletests
 import re
 from statsmodels.stats.inter_rater import fleiss_kappa
 from statsmodels.stats.inter_rater import aggregate_raters
-from shutil import copyfile
+
 #%function
 
 def calculate_and_display_fleiss_kappa(data):
@@ -28,9 +28,9 @@ def calculate_and_display_fleiss_kappa(data):
 
 #%% Expert
 
-Path_votings = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\*\votings.csv"
+Path_votings_chang = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Chang\*\votings.csv"
 
-All_csv_votings = glob.glob(Path_votings)
+All_csv_votings = glob.glob(Path_votings_chang)
 
 def read_csv_files(files):
     data_dict = {}
@@ -48,26 +48,28 @@ for df_name, df in All_values.items():
     if "corresponding_img" in df.columns:
         img_values.extend(df["corresponding_img"].tolist())
 
-new_df = pd.DataFrame({"corresponding_img": img_values})
+chang_df = pd.DataFrame({"corresponding_img": img_values})
+###
+###
 
+Path_votings_standard = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_standard\*\votings.csv"
 
-PP =  r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard"
-    
-for tt in new_df["corresponding_img"]: 
-    
-    String = os.path.join(PP,"**",tt)
-    PathIm = glob.glob(String,recursive=True)
-    temp = os.path.dirname(PathIm[0])
-    Path_study = os.path.dirname(temp)
-    Path_new_folder = os.path.join(Path_study,"votedImages")
-    PathIm_new = os.path.join(Path_new_folder,tt)
-    if not os.path.exists(Path_new_folder):
-        os.mkdir(Path_new_folder)
-        
-    copyfile(PathIm[0],PathIm_new)
-    print(String)
+All_csv_votings = glob.glob(Path_votings_standard)
 
+def read_csv_files(files):
+    data_dict = {}
+    for ff,file in enumerate(files):
+        df = pd.read_csv(file)    
+        data_dict[ff] = df[df["Voting outliers (from 5)"]>0] 
+            
+    return data_dict
 
+All_values = read_csv_files(All_csv_votings)
 
+img_values = []
 
+for df_name, df in All_values.items():
+    if "corresponding_img" in df.columns:
+        img_values.extend(df["corresponding_img"].tolist())
 
+standard_df = pd.DataFrame({"corresponding_img": img_values})
