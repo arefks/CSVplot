@@ -210,8 +210,8 @@ plt.show()
 
 #%% SNR Chang vs Standard plot for RT and Cryp
 
-p_address = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94_m_As\calculated_features\caculated_features_anatomical.csv"
-p_address2= r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94c_m_As\calculated_features\caculated_features_anatomical.csv"
+p_address = "C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\94_m_As\calculated_features\caculated_features_anatomical.csv"
+p_address2= "C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\94c_m_As\calculated_features\caculated_features_anatomical.csv"
 #p_save = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\ChangVSStandard"
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -293,8 +293,8 @@ plt.show()
 
 #%% SNR Chang vs Standard plot for RT and Cryp Version 2
 
-p_address = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94_m_As\calculated_features\caculated_features_anatomical.csv"
-p_address2= r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94c_m_As\calculated_features\caculated_features_anatomical.csv"
+p_address = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\94_m_As\calculated_features\caculated_features_anatomical.csv"
+p_address2= r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\94c_m_As\calculated_features\caculated_features_anatomical.csv"
 #p_save = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\ChangVSStandard"
 import pandas as pd
 import matplotlib.pyplot as plt
