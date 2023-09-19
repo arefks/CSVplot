@@ -36,7 +36,7 @@ def compare_and_plot(data, column_name, group_column):
     plt.show()
 
 #% List of CSV files for each data type
-Path = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\outputs\QC_Final\validation"
+Path = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Plot_SNR"
 
 anatomical_files = glob.glob(os.path.join(Path,"**/*caculated_features_anatomical.csv"), recursive=True)
 structural_files = glob.glob(os.path.join(Path,"**/*caculated_features_structural.csv"), recursive=True)
@@ -53,9 +53,11 @@ All_Data = [anatomical_data,structural_data,functional_data]
 All_type = ["anatomical","structural","functional"]
 #% data statistisc figure 7
 
-features_to_compare = ["SNR Chang", "SNR Normal", "tSNR (Averaged Brain ROI)", "Displacement factor (std of Mutual information)"]
+#features_to_compare = ["SNR Chang", "SNR Normal", "tSNR (Averaged Brain ROI)", "Displacement factor (std of Mutual information)"]
+features_to_compare = ["SpatRx", "SpatRy", "Slicethick"]
 
 
+Data_of_selected_feature2 = pd.DataFrame()
 for dd,data in enumerate(All_Data):
     for feature in features_to_compare:
         cc = 0
@@ -71,7 +73,7 @@ for dd,data in enumerate(All_Data):
             temp_data["Dataset"] = All_files[dd][cc].split(os.sep)[-3]
             cc = cc +1
             Data_of_selected_feature = pd.concat([Data_of_selected_feature, temp_data], ignore_index=True)
-            
+            #Data_of_selected_feature2 = pd.concat([Data_of_selected_feature2, temp_data], ignore_index=True)
             
             
             
@@ -93,7 +95,7 @@ for dd,data in enumerate(All_Data):
                 feature = "Motion severity (A.U)"
             
             
-            
+            #Data_of_selected_feature2["Vol"] = Data_of_selected_feature2["SpatRx"]*Data_of_selected_feature2["SpatRy"]*Data_of_selected_feature2["Slicethick"]
             
             #Data_of_selected_feature = Data_of_selected_feature.sort_values("Dataset",ascending=False)
             # creating boxplots
@@ -210,8 +212,8 @@ plt.show()
 
 #%% SNR Chang vs Standard plot for RT and Cryp
 
-p_address = "C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\94_m_As\calculated_features\caculated_features_anatomical.csv"
-p_address2= "C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\94c_m_As\calculated_features\caculated_features_anatomical.csv"
+p_address = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\94_m_As_allslice\calculated_features\caculated_features_structural.csv"
+p_address2= r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\94c_m_As_allslices\calculated_features\caculated_features_structural.csv"
 #p_save = r"\\10.209.5.114\Publications\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\ChangVSStandard"
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -248,15 +250,15 @@ normal2["type"] = "normal_Cryo"
 
 Data_merged = data[["SNR Chang","SNR Normal"]]
 Data_merged.rename(columns={"SNR Normal":"SNR-standard"})
-Data_merged[["SNR Chang","SNR Normal"]] = Data_merged[["SNR Chang","SNR Normal"]].apply(lambda x: np.power((x/20),10))
+#Data_merged[["SNR Chang","SNR Normal"]] = Data_merged[["SNR Chang","SNR Normal"]].apply(lambda x: np.power((x/20),10))
 
 Data_merged2 = data2[["SNR Chang","SNR Normal"]]
 Data_merged2.rename(columns={"SNR Normal":"SNR-standard"})
-Data_merged2[["SNR Chang","SNR Normal"]] = Data_merged2[["SNR Chang","SNR Normal"]].apply(lambda x: np.power((x/20),10))
+#Data_merged2[["SNR Chang","SNR Normal"]] = Data_merged2[["SNR Chang","SNR Normal"]].apply(lambda x: np.power((x/20),10))
 
 
 SNR = pd.concat([chang, normal,chang2,normal2])
-SNR["SNR"] = SNR["SNR"].apply(lambda x: np.power(x/20,10))
+#SNR["SNR"] = SNR["SNR"].apply(lambda x: np.power(x/20,10))
 
 tips = SNR
 x = "type"
