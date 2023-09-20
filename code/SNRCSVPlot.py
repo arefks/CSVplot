@@ -36,7 +36,7 @@ def compare_and_plot(data, column_name, group_column):
     plt.show()
 
 #% List of CSV files for each data type
-Path = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Plot_FielStreangth"
+Path = r"C:\Users\arefk\OneDrive\Desktop\Projects\QC_Plot_VoxelsSize"
 
 anatomical_files = glob.glob(os.path.join(Path,"**/*caculated_features_anatomical.csv"), recursive=True)
 structural_files = glob.glob(os.path.join(Path,"**/*caculated_features_structural.csv"), recursive=True)
@@ -54,7 +54,7 @@ All_type = ["anatomical"]
 #% data statistisc figure 7
 
 #features_to_compare = ["SNR Chang", "SNR Normal", "tSNR (Averaged Brain ROI)", "Displacement factor (std of Mutual information)"]
-features_to_compare = ["SNR Chang", "SNR Normal"]
+features_to_compare = ["SNR Chang"]
 #features_to_compare = ["Vol"]
 
 for dd,data in enumerate(All_Data):
@@ -82,7 +82,7 @@ for dd,data in enumerate(All_Data):
             
         if not Data_of_selected_feature.empty:
             Data_of_selected_feature['sort'] = Data_of_selected_feature['Dataset'].str.extract('(\d+)', expand=True).astype(int)
-            Data_of_selected_feature = Data_of_selected_feature.sort_values('sort')
+            Data_of_selected_feature = Data_of_selected_feature.sort_values('Dataset')
             
             if feature == "SNR Normal":
                 Data_of_selected_feature.rename(columns={"SNR Normal": "SNR-Standard (dB)"}, inplace=True)
@@ -101,9 +101,9 @@ for dd,data in enumerate(All_Data):
             Data_of_selected_feature["Vol"] = Data_of_selected_feature["SpatRx"]*Data_of_selected_feature["SpatRy"]*Data_of_selected_feature["Slicethick"]
             #Data_of_selected_feature = Data_of_selected_feature.sort_values("Dataset",ascending=False)
             # creating boxplots
-            plt.figure(figsize=(9.59*cm,3.527*cm),dpi=300)
+            plt.figure(figsize=(3*cm,5*cm),dpi=300)
             sns.set_style('ticks')
-            sns.set(font='Times New Roman', font_scale=0.9,style=None)  # Set font to Times New Roman and font size to 9
+            sns.set(font='Times New Roman', font_scale=0.8,style=None)  # Set font to Times New Roman and font size to 9
             palette = 'Set2'
             ax = sns.violinplot(x="Dataset", y=feature, data=Data_of_selected_feature, hue="Dataset", dodge=False,
                                 palette=palette,
@@ -152,3 +152,35 @@ for dd,data in enumerate(All_Data):
             plt.xticks(ha='right')
             #plt.savefig(os.path.join(Path,feature+"_"+All_type[dd]+".svg"), format='svg', bbox_inches='tight',transparent=False)
             plt.show()
+                        
+            import pandas as pd
+            import scikit_posthocs as sp
+             
+            # reading CSV file
+            dataset= pd.read_csv(r"C:\Users\arefk\OneDrive\Desktop\Projects\iris.csv")
+             
+            # data which contains sepal width of the three species
+            data = [Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_Rei"]['Vol'],
+                    Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_We"]['Vol'],
+                    Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94c_m_As"]['Vol']]
+             
+            # using the posthoc_dunn() function
+            p_values= sp.posthoc_dunn(data, p_adjust = 'holm')
+             
+            print(p_values)
+                        
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
