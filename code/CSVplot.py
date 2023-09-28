@@ -36,7 +36,7 @@ def compare_and_plot(data, column_name, group_column):
     plt.show()
 
 #% List of CSV files for each data type
-Path = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Plot_SNR"
+Path = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Chang"
 
 anatomical_files = glob.glob(os.path.join(Path,"**/*caculated_features_anatomical.csv"), recursive=True)
 structural_files = glob.glob(os.path.join(Path,"**/*caculated_features_structural.csv"), recursive=True)
@@ -53,8 +53,9 @@ All_Data = [anatomical_data,structural_data,functional_data]
 All_type = ["anatomical","structural","functional"]
 #% data statistisc figure 7
 
-#features_to_compare = ["SNR Chang", "SNR Normal", "tSNR (Averaged Brain ROI)", "Displacement factor (std of Mutual information)"]
-features_to_compare = ["SpatRx", "SpatRy", "Slicethick"]
+features_to_compare = ["SNR Chang", "SNR Normal", "tSNR (Averaged Brain ROI)", "Displacement factor (std of Mutual information)"]
+
+#features_to_compare = ["SpatRx", "SpatRy", "Slicethick"]
 
 
 Data_of_selected_feature2 = pd.DataFrame()
@@ -153,8 +154,8 @@ for dd,data in enumerate(All_Data):
 #%% Data statistics figure 6
 
 
-p_address = r"Y:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\AIDAqc_Testdaten.csv"
-p_save = r"Y:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\PieChart"
+p_address = r"X:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\AIDAqc_Testdaten.csv"
+p_save = r"X:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\PieChart"
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -182,24 +183,24 @@ fig, axes = plt.subplots(1, 4, figsize=(22.62*cm,100*cm), dpi=300)
 # Species pie chart
 species_counts = data['Species'].value_counts()
 axes[0].pie(species_counts, labels=species_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.75)
-axes[0].set_title('(a) Species Distribution', weight='bold', fontsize=8)
+axes[0].set_title('(a) Species', weight='bold', fontsize=10)
 
 # Field strength pie chart
 scanner_counts = data['Scanner'].value_counts()
 axes[1].pie(scanner_counts, labels=scanner_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.70)
-axes[1].set_title('(b) Field Strength Distribution', weight='bold', fontsize=8)
+axes[1].set_title('(b) Field strength', weight='bold', fontsize=10)
 
 # Sequence type pie chart
 sequences_data = data['Sequences'].str.split(', ', expand=True)
 sequences_melted = sequences_data.melt(value_name='Sequence').dropna()['Sequence']
 sequence_counts = sequences_melted.value_counts()
 axes[2].pie(sequence_counts, labels=sequence_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.65)
-axes[2].set_title('(c) Sequence Type Distribution', weight='bold', fontsize=8)
+axes[2].set_title('(c) Sequence type', weight='bold', fontsize=10)
 
 # Data format pie chart
 format_counts = data['Data format'].value_counts()
 axes[3].pie(format_counts, labels=format_counts.index, autopct='%1.1f%%', startangle=180)
-axes[3].set_title('(d) Data Format Distribution', weight='bold', fontsize=8)
+axes[3].set_title('(d) Data format', weight='bold', fontsize=10)
 
 # Turn off axes for all subplots
 for ax in axes:
@@ -384,7 +385,7 @@ import numpy as np
 
 cm = 1/2.54  # centimeters in inches
 # Specify the path to your Excel file
-excel_file_path = r"C:\Users\aswen\Desktop\validation\Chang&normal_all.xlsx"
+excel_file_path = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\Chang&normal_all.xlsx"
 plt.figure(figsize=(10*cm,10*cm),dpi=300)
 # Read the data into a pandas DataFrame
 df = pd.read_excel(excel_file_path, engine='openpyxl')
@@ -402,7 +403,7 @@ filtered_df = df[df['Dataset'].isin(['94_m_We', '94_m_Va'])]
 
 plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['font.size'] = 8
-plt.title("All anatomical data",weight='bold')
+plt.title("All anatomical data",weight='bold', fontsize=10)
 
 # Calculate the correlation and p-value between 'SNR-Chang' and 'SNR-Standard'
 #correlation, p_value = stats.pearsonr(df['SNR-Chang (dB)'], df['SNR-Standard (dB)'])
@@ -411,9 +412,11 @@ correlation, p_value = stats.spearmanr(df['SNR-Chang'], df['SNR-Standard'], nan_
 # Set seaborn style
 sns.set_style('whitegrid')
 
+
 # Create a scatter plot
 #ax=sns.scatterplot(data=df, x='SNR-Chang', y='SNR-Standard',palette="gray_r",s=7)
 ax=sns.scatterplot(data=df, x='SNR-Chang', y='SNR-Standard',hue="Dataset",palette="Spectral_r",s=7)
+ax.set_title("All anatomical data", weight='bold', fontsize=11)
 
 
 

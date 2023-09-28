@@ -36,7 +36,7 @@ def compare_and_plot(data, column_name, group_column):
     plt.show()
 
 #% List of CSV files for each data type
-Path = r"C:\Users\arefk\OneDrive\Desktop\Projects\QC_Plot_VoxelsSize"
+Path = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_SameFSdiffVS" #QC_Plot_VoxelsSize
 
 anatomical_files = glob.glob(os.path.join(Path,"**/*caculated_features_anatomical.csv"), recursive=True)
 structural_files = glob.glob(os.path.join(Path,"**/*caculated_features_structural.csv"), recursive=True)
@@ -101,10 +101,10 @@ for dd,data in enumerate(All_Data):
             Data_of_selected_feature["Vol"] = Data_of_selected_feature["SpatRx"]*Data_of_selected_feature["SpatRy"]*Data_of_selected_feature["Slicethick"]
             #Data_of_selected_feature = Data_of_selected_feature.sort_values("Dataset",ascending=False)
             # creating boxplots
-            plt.figure(figsize=(3*cm,5*cm),dpi=300)
+            plt.figure(figsize=(4.5*cm,5*cm),dpi=300)
             sns.set_style('ticks')
             sns.set(font='Times New Roman', font_scale=0.8,style=None)  # Set font to Times New Roman and font size to 9
-            palette = 'Set2'
+            palette = 'pastel'
             ax = sns.violinplot(x="Dataset", y=feature, data=Data_of_selected_feature, hue="Dataset", dodge=False,
                                 palette=palette,
                                 scale="width", inner=None,linewidth=1)
@@ -129,13 +129,14 @@ for dd,data in enumerate(All_Data):
             ax.legend_.remove()
             ax
             ax.set_xticklabels(ax.get_xticklabels(), rotation=45,fontsize=8)
+            #ax.set_ylabel(ax.get_ylabels(),fontsize=8)
 # =============================================================================
 #             for label, color in zip(ax.get_xticklabels(), legend_colors):
 #                 label.set_color(color)
 # =============================================================================
             ax.set_xlabel('')
-            ax.set_title(All_type[dd].capitalize(),weight='bold',fontsize=9)
-            y_label = ax.set_ylabel(ax.get_ylabel(), fontweight='bold',fontsize=9)
+            ax.set_title("(b) Voxel size effect",weight='bold',fontsize=10)
+            y_label = ax.set_ylabel(ax.get_ylabel(),fontsize=8)
 
 # =============================================================================
             ax.xaxis.grid(True, linestyle='-', which='major', color='gray', linewidth=0.5)
@@ -144,8 +145,8 @@ for dd,data in enumerate(All_Data):
             ax.yaxis.grid(True, linestyle='-', which='major', color='gray', linewidth=0.5)
             ax.yaxis.grid(True, linestyle='--', which='minor', color='gray', linewidth=0.5)        
 # =============================================================================
-            ax.spines['top'].set_linewidth(0.5)  # Top border
-            ax.spines['right'].set_linewidth(0.5)  # Right border
+            ax.spines['top'].set_linewidth(0)  # Top border
+            ax.spines['right'].set_linewidth(0)  # Right border
             ax.spines['bottom'].set_linewidth(0.5)  # Bottom border
             ax.spines['left'].set_linewidth(0.5)  # Left border
             ax.tick_params(axis='both', which='both', width=0.5,color='gray',length=2)
@@ -155,15 +156,27 @@ for dd,data in enumerate(All_Data):
                         
             import pandas as pd
             import scikit_posthocs as sp
-             
+            from scipy.stats import kruskal
+
             # reading CSV file
-            dataset= pd.read_csv(r"C:\Users\arefk\OneDrive\Desktop\Projects\iris.csv")
+            #dataset= pd.read_csv(r"C:\Users\arefk\OneDrive\Desktop\Projects\iris.csv")
              
             # data which contains sepal width of the three species
-            data = [Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_Rei"]['Vol'],
-                    Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_We"]['Vol'],
-                    Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94c_m_As"]['Vol']]
-             
+            # data = [Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_Rei"]['Vol'],
+            #        Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_We"]['Vol'],
+            #        Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94c_m_As"]['Vol']]
+            
+            data = [Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_As"][feature],
+                    Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_Ce"][feature],
+                    Data_of_selected_feature[Data_of_selected_feature['Dataset']=="94_m_Je"][feature]]
+            
+            
+            
+                         
+            # Perform Kruskal-Wallis test
+            kruskal_statistic, p_value_kruskal = kruskal(*data,nan_policy="omit")
+            print(kruskal_statistic)
+            print(p_value_kruskal)
             # using the posthoc_dunn() function
             p_values= sp.posthoc_dunn(data, p_adjust = 'holm')
              

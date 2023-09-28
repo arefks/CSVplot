@@ -28,7 +28,7 @@ def calculate_and_display_fleiss_kappa(data):
 
 #%% Expert
 
-Path_votings = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard\*\votings.csv"
+Path_votings = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\test\*\votings.csv"
 
 All_csv_votings = glob.glob(Path_votings)
 
@@ -51,7 +51,7 @@ for df_name, df in All_values.items():
 new_df = pd.DataFrame({"corresponding_img": img_values})
 
 
-PP =  r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Standard"
+PP =  r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\test"
     
 for tt in new_df["corresponding_img"]: 
     
