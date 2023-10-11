@@ -28,7 +28,7 @@ def calculate_and_display_fleiss_kappa(data):
 
 #%% Expert
 
-Path_votings = r"C:\Users\aswen\Desktop\validation\*\votings.csv"
+Path_votings = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\votings.csv"
 
 All_csv_votings = glob.glob(Path_votings)
 
@@ -36,7 +36,8 @@ def read_csv_files(files):
     data_dict = {}
     for ff,file in enumerate(files):
         df = pd.read_csv(file)    
-        data_dict[ff] = df[df["Voting outliers (from 5)"]>0] 
+        #data_dict[ff] = df[df["Voting outliers (from 5)"]] 
+        data_dict[ff] = df
             
     return data_dict
 
@@ -50,23 +51,23 @@ for df_name, df in All_values.items():
 
 new_df = pd.DataFrame({"corresponding_img": img_values})
 
-MU_strings = ["experienced","expert"]
-Namesy = ["Pre-qc review","Post-qc review"]
-Sequence_type = ["anatomical","functional","structural"]
+MU_strings = ["adam","joanes"]
+
+Sequence_type = ["anatomical"]
 cc=0
 cm = 1/2.54  # centimeters in inches
 
 plt.figure(figsize=(18*cm, 9*cm))
-fig, ax = plt.subplots(2,3, dpi=300,figsize=(18*cm, 9*cm))#,sharex="row",sharey="row")
+fig, ax = plt.subplots(1,2, dpi=300,figsize=(18*cm, 9*cm))#,sharex="row",sharey="row")
 #fig.suptitle('Confusion matrix',fontname='Times New Roman')
         
 Matric_sequneces = []
 for ss,S in enumerate(Sequence_type):
     for mu,MU in enumerate(MU_strings):
         
-        Path = r"C:\Users\aswen\Desktop\validation\*\manual_slice_inspection"
+        Path = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\votings.csv"
         
-        p_afs = os.path.join(Path,S+"*.png")
+        p_afs = os.path.join(os.path.dirname(Path),S+"*.png")
         
         afs_all = glob.glob(p_afs,recursive=True)
         afs_all = [os.path.basename(path) for path in afs_all]
@@ -75,7 +76,8 @@ for ss,S in enumerate(Sequence_type):
         count_afs_all = len(afs_all)
         
 
-        Path_gt = r"C:\Users\aswen\Desktop\validation\*\validation_" + MU
+        Path_gt = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*\validation_" + MU
+        
         pgt_afs = os.path.join(Path_gt, S+"*.png")
         
         afsgt_all = glob.glob(pgt_afs,recursive=True)
@@ -147,7 +149,7 @@ for ss,S in enumerate(Sequence_type):
                               annot_kws={"fontname": "Times New Roman"},
                               xticklabels=False, yticklabels=False, cbar=False,ax=ax[mu,ss])
         ax[mu, ss].set_xlabel('AIDAqc', fontname='Times New Roman')
-        ax[mu, ss].set_ylabel(Namesy[mu], fontname='Times New Roman')
+        ax[mu, ss].set_ylabel("Test", fontname='Times New Roman')
         ax[mu, ss].set_title(S.capitalize()+'\n F1-score: %.2f' % f1_score + "", fontname='Times New Roman', weight="bold")
         ax[mu, ss].set_xticks([0.5, 1.5])
         ax[mu, ss].set_xticklabels(['bad', 'good'], fontname='Times New Roman')
