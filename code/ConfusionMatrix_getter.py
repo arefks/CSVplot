@@ -32,7 +32,7 @@ def calculate_confusion_matrix(path, Sequence, Voting_threshold):
     # Step 3: Filter rows based on the "majority vote" column
     threshold = Voting_threshold
     aidaqc_voting_thresolded = aidaqc_voting[aidaqc_voting["Voting outliers (from 5)"] >= threshold]
-    
+    S = Sequence
     # Step 4: List all PNG images in the "manual_slice_inspection" folder
     manual_slice_inspection_path = os.path.join(initial_path, "manual_slice_inspection")
     manual_slice_images = [file for file in os.listdir(manual_slice_inspection_path) if file.endswith(".png")]
@@ -52,9 +52,26 @@ def calculate_confusion_matrix(path, Sequence, Voting_threshold):
         manual_voting[folder_name] = manual_voting["manual_slice_inspection"].apply(lambda x: 1 if x in folder_images else 0)
     
     # Now you have "VoteTemp" and "manual_voting" dataframes as described in steps 3 and 5 with the corrected code.
+    manual_voting_afs = manual_voting[manual_voting['manual_slice_inspection'].str.startswith(S)] 
+    
+    # Create a new DataFrame containing only the relevant columns
+    columns_to_include = [col for col in manual_voting_afs.columns if col != "manual_slice_inspection" and col != "MajorityVoteMR"]
+    ratings_data = manual_voting_afs[columns_to_include]
+
+    try:
+        # Convert the ratings data to a format expected by fleiss_kappa
+        ratings_matrix,d = aggregate_raters(ratings_data.values, n_cat=None) 
+    
+        # Calculate Fleiss' Kappa
+        kappa = fleiss_kappa(ratings_matrix,method='fleiss')
+    except ValueError:
+        kappa = 0
+
+    
+    
     manual_voting['MajorityVoteMR'] = manual_voting.iloc[:, 1:].sum(axis=1)
     manual_voting_thresholded = manual_voting[manual_voting["MajorityVoteMR"] >= threshold]
-    S = Sequence
+    
     #Separate the new_df DataFrame based on specific prefixes
     manual_voting_thresholded_afs = manual_voting_thresholded[manual_voting_thresholded['manual_slice_inspection'].str.startswith(S)]
     aidaqc_voting_thresolded_afs = aidaqc_voting_thresolded[aidaqc_voting_thresolded['corresponding_img'].str.startswith(S)] 
@@ -80,30 +97,41 @@ def calculate_confusion_matrix(path, Sequence, Voting_threshold):
     afs_FP = len(afs_intersect_qc_gt_FP)
     afs_TN = len(afs_intersect_qc_gt_TN)
     
-    
-    afs_percent_TP = (afs_TP / countgt_afs_bad)
+    if countgt_afs_bad == 0:
+        afs_percent_TP = 0
+    else:
+        afs_percent_TP = (afs_TP / countgt_afs_bad)
     afs_percent_FN = (1 - afs_percent_TP)
-    afs_percent_FP = (afs_FP /countgt_afs_good)
+    
+    if countgt_afs_good == 0:
+        afs_percent_FP = 0
+    else:
+        afs_percent_FP = (afs_FP /countgt_afs_good)
+    
     afs_percent_TN = (1 - afs_percent_FP)
     
     
-    # Calculate precision
-    precision = afs_TP / (afs_TP + afs_FP)
-    #print("precision"+str(precision))
+    if afs_TP + afs_FP == 0:
+        precision = 0
+    else:
+        precision = afs_TP / (afs_TP + afs_FP)
+
     # Calculate recall
-    recall = afs_TP / (afs_TP + afs_FN)
-    #print("recall:"+str(recall))
-    
+    if afs_TP + afs_FN == 0:
+        recall = 0
+    else:
+        recall = afs_TP / (afs_TP + afs_FN)
+
     # Calculate F1 score
-    f1_score = 2 * (precision * recall) / (precision + recall)
-    
-    # Print the F1 score
-    #print("F1 Score:", f1_score)
+    if precision + recall == 0:
+        f1_score = 0
+    else:
+        f1_score = 2 * (precision * recall) / (precision + recall)    
     
     
     confusion_matrix = [[afs_percent_TP, afs_percent_FN],
                          [afs_percent_FP, afs_percent_TN]]
-    return confusion_matrix, f1_score
+    return confusion_matrix, f1_score, kappa
     
     
 
