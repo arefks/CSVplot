@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Step 1: Read three CSV files
-path = r"Z:\2023_Kalantari_AIDAqc\outputs\figs"  # Use a raw string (r) to avoid escape characters
+path = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs"  # Use a raw string (r) to avoid escape characters
 func_df = pd.read_csv(os.path.join(path, 'combined_data_func.csv'))
 struct_df = pd.read_csv(os.path.join(path, 'combined_data_struct.csv'))
 anat_df = pd.read_csv(os.path.join(path, 'combined_data_anat.csv'))
@@ -29,7 +29,7 @@ for file_address in common_file_addresses:
     func_rows = func_df[func_df['FileAddress'] == file_address]
     
     # Calculate the average of 'SNR Chang' and 'tSNR (Averaged Brain ROI)' values, ignoring NaNs
-    avg_snr_chang = anat_rows['SNR Normal'].mean()
+    avg_snr_chang = anat_rows['SNR Normal'].mean() #Here you have to set what kind of SNR you want to plot
     avg_tsnr_avg_brain_roi = func_rows['tSNR (Averaged Brain ROI)'].mean()
     
     result_data.append({
@@ -64,11 +64,15 @@ cm = 1/2.54  # centimeters in inches
 
 # Create the plot
 
-plt.figure(figsize=(4.5*cm, 5*cm), dpi=300)
+#plt.figure(figsize=(4.5*cm, 5*cm), dpi=100)
 
 # Use Seaborn's scatterplot function
-sns.scatterplot(x='Average SNR Chang', y='Average tSNR (Averaged Brain ROI)',
-                data=result_df, palette='Set2', s=10)
+h = 5*cm
+width = 9*cm
+aspect = width/h 
+sns.lmplot(x='Average SNR Chang', y='Average tSNR (Averaged Brain ROI)',
+                data=result_df, palette='Set2',height=h,aspect = aspect,ci=100,scatter_kws={'s': 8,'color': '#4C72B0','edgecolor':'w','linewidths':.3},line_kws={'lw': 2, 'color': '#4682b4'})
+plt.rcParams['figure.dpi'] = 300
 
 plt.xlabel('Anatomical SNR standard (dB)', fontsize=8)
 plt.ylabel('Functional tSNR (dB)', fontsize=8)
@@ -98,5 +102,5 @@ ax.yaxis.grid(True, linestyle='--', which='minor', color='gray', linewidth=0.5)
 ax.xaxis.grid(True, linestyle='-', which='major', color='gray', linewidth=0.5)
 ax.xaxis.grid(True, linestyle='--', which='minor', color='gray', linewidth=0.5)
 ax.tick_params(axis='both', which='both', width=0.5,color='gray',length=2)
-ax.set_title("(c) tSNR func vs SNR anat",weight='bold',fontsize=10)
+ax.set_title("(a) tSNR functional vs SNR anatomical",weight='bold',fontsize=10)
 plt.show()

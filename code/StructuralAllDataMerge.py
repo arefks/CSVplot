@@ -3,7 +3,7 @@ import glob
 import pandas as pd
 
 # Step 1: Define the starting path and file pattern
-start_path = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Chang"
+start_path = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation"
 file_pattern = '*structu*.csv'
 
 # Step 2: Find all matching CSV files in the specified directory and its subdirectories

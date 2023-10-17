@@ -14,36 +14,45 @@ from statsmodels.stats.inter_rater import fleiss_kappa
 from statsmodels.stats.inter_rater import aggregate_raters
 from ConfusionMatrix_getter import *
 
-path = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\*/"
+path = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation\*/"
 
 List_folders = glob.glob(path)
 
+Result = []
+
 Sequence = ["anatomical","structural","functional"]
-Voting_threshold = 1
-for L in List_folders:
-    for S in Sequence:
-        
-        confusion_matrix,f1_score,kappa = calculate_confusion_matrix(L, S, Voting_threshold)
-        # Create a heatmap using Seaborn
-        cm = 1/2.54  # centimeters in inches
-        
-        plt.figure(figsize=(18*cm, 9*cm))
-        fig, ax = plt.subplots(1,1, dpi=300,figsize=(18*cm, 9*cm))#,sharex="row",sharey="row")
-        #fig.suptitle('Confusion matrix',fontname='Times New Roman')
-                
-        
-        sns.set(font_scale=0.8)  # Adjust the font size
-        heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='.2%', cmap='Greys',
-                              annot_kws={"fontname": "Times New Roman"},
-                              xticklabels=False, yticklabels=False, cbar=False)
-        ax.set_xlabel('AIDAqc', fontname='Times New Roman')
-        ax.set_ylabel("Manual Rater", fontname='Times New Roman')
-        ax.set_title(S.capitalize()+" & "+ os.path.basename(os.path.abspath(L))  +'\n F1-score: %.2f' % f1_score + '  |  Kappa: %.2f' % kappa , fontname='Times New Roman', weight="bold")
-        ax.set_xticks([0.5, 1.5])
-        ax.set_xticklabels(['bad', 'good'], fontname='Times New Roman')
-        ax.set_yticks([0.5, 1.5])
-        ax.set_yticklabels(['bad', 'good'], fontname='Times New Roman')
-    
+Voting_threshold = [1,2,3]
+ErrorAll = []
+for v in Voting_threshold:
+    for L in List_folders:
+        for S in Sequence:
+            
+            confusion_matrix,f1_score,kappa,Errors = calculate_confusion_matrix(L, S, v)
+            Result.append({"Dataset":os.path.basename(os.path.abspath(L)),"Thresold":v,"Sequence":S,"Kappa":kappa,"F1_score":f1_score})
+            if any(Errors):
+                ErrorAll.append(Errors[0])
+            # Create a heatmap using Seaborn
+            cm = 1/2.54  # centimeters in inches
+            
+            plt.figure(figsize=(18*cm, 9*cm))
+            fig, ax = plt.subplots(1,1, dpi=300,figsize=(18*cm, 9*cm))#,sharex="row",sharey="row")
+            #fig.suptitle('Confusion matrix',fontname='Times New Roman')
+                    
+            
+            sns.set(font_scale=0.8)  # Adjust the font size
+            heatmap = sns.heatmap(confusion_matrix, annot=True, fmt='.2%', cmap='Greys',
+                                  annot_kws={"fontname": "Times New Roman"},
+                                  xticklabels=False, yticklabels=False, cbar=False)
+            ax.set_xlabel('AIDAqc', fontname='Times New Roman')
+            ax.set_ylabel("Manual Rater", fontname='Times New Roman')
+            ax.set_title(S.capitalize()+" & "+ os.path.basename(os.path.abspath(L))  +'\n F1-score: %.2f' % f1_score + '  |  Kappa: %.2f' % kappa , fontname='Times New Roman', weight="bold")
+            ax.set_xticks([0.5, 1.5])
+            ax.set_xticklabels(['bad', 'good'], fontname='Times New Roman')
+            ax.set_yticks([0.5, 1.5])
+            ax.set_yticklabels(['bad', 'good'], fontname='Times New Roman')
+            plt.show()
+ResultD = pd.DataFrame(Result)  
+ResultD.to_excel(r"C:\Users\arefk\OneDrive\Desktop\Projects\Results.xlsx", engine='xlsxwriter')  
 #%% All together
 
 import glob

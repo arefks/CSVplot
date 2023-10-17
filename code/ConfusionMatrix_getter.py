@@ -15,6 +15,7 @@ from statsmodels.stats.inter_rater import aggregate_raters
 
 def calculate_confusion_matrix(path, Sequence, Voting_threshold):
     # Step 1: Accept an initial path as input and look for "voting.csv" files
+    Errors = []
     initial_path = path  # Replace with the actual path
     voting_csv_files = []
     for root, dirs, files in os.walk(initial_path):
@@ -65,6 +66,9 @@ def calculate_confusion_matrix(path, Sequence, Voting_threshold):
         # Calculate Fleiss' Kappa
         kappa = fleiss_kappa(ratings_matrix,method='fleiss')
     except ValueError:
+        print("\n "+"value Error, no kappa could be calculated for:")
+        print(path + Sequence)
+        Errors.append(path + Sequence)
         kappa = 0
 
     
@@ -98,13 +102,20 @@ def calculate_confusion_matrix(path, Sequence, Voting_threshold):
     afs_TN = len(afs_intersect_qc_gt_TN)
     
     if countgt_afs_bad == 0:
+        print("\n "+"countgt_afs_bad was zero for:")
+        print(path + Sequence)
         afs_percent_TP = 0
+        Errors.append(path + Sequence)
     else:
         afs_percent_TP = (afs_TP / countgt_afs_bad)
+    
     afs_percent_FN = (1 - afs_percent_TP)
     
     if countgt_afs_good == 0:
         afs_percent_FP = 0
+        print("\n "+"countgt_afs_good was zero for:")
+        print(path + Sequence)
+        Errors.append(path + Sequence)
     else:
         afs_percent_FP = (afs_FP /countgt_afs_good)
     
@@ -112,26 +123,35 @@ def calculate_confusion_matrix(path, Sequence, Voting_threshold):
     
     
     if afs_TP + afs_FP == 0:
+        print("\n "+"afs_TP + afs_FP was zero for:")
+        print(path + Sequence)
         precision = 0
+        Errors.append(path + Sequence)
     else:
         precision = afs_TP / (afs_TP + afs_FP)
 
     # Calculate recall
     if afs_TP + afs_FN == 0:
+        print("\n "+"afs_TP + afs_FN was zero for:")
+        print(path + Sequence)
         recall = 0
+        Errors.append(path + Sequence)
     else:
         recall = afs_TP / (afs_TP + afs_FN)
 
     # Calculate F1 score
     if precision + recall == 0:
+        print("\n "+"precision + recall was zero for:")
+        print(path + Sequence)
         f1_score = 0
+        Errors.append(path + Sequence)
     else:
         f1_score = 2 * (precision * recall) / (precision + recall)    
     
     
     confusion_matrix = [[afs_percent_TP, afs_percent_FN],
                          [afs_percent_FP, afs_percent_TN]]
-    return confusion_matrix, f1_score, kappa
+    return confusion_matrix, f1_score, kappa, np.unique(Errors)
     
     
 

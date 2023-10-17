@@ -36,7 +36,7 @@ def compare_and_plot(data, column_name, group_column):
     plt.show()
 
 #% List of CSV files for each data type
-Path = r"C:\Users\aswen\Documents\Data\2023_Kalantari_AIDAqc\outputs\validation\QC_Chang"
+Path = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation"
 
 anatomical_files = glob.glob(os.path.join(Path,"**/*caculated_features_anatomical.csv"), recursive=True)
 structural_files = glob.glob(os.path.join(Path,"**/*caculated_features_structural.csv"), recursive=True)
@@ -133,8 +133,8 @@ for dd,data in enumerate(All_Data):
 #                 label.set_color(color)
 # =============================================================================
             ax.set_xlabel('')
-            ax.set_title(All_type[dd].capitalize(),weight='bold',fontsize=9)
-            y_label = ax.set_ylabel(ax.get_ylabel(), fontweight='bold',fontsize=9)
+            ax.set_title(All_type[dd].capitalize(),weight='bold',fontsize=10)
+            y_label = ax.set_ylabel(ax.get_ylabel(),fontsize=8)
 
 # =============================================================================
             ax.xaxis.grid(True, linestyle='-', which='major', color='gray', linewidth=0.5)
@@ -154,7 +154,7 @@ for dd,data in enumerate(All_Data):
 #%% Data statistics figure 6
 
 
-p_address = r"X:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\AIDAqc_Testdaten.csv"
+p_address = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation\AIDAqc_Testdaten.csv"
 p_save = r"X:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\PieChart"
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -183,24 +183,24 @@ fig, axes = plt.subplots(1, 4, figsize=(22.62*cm,100*cm), dpi=300)
 # Species pie chart
 species_counts = data['Species'].value_counts()
 axes[0].pie(species_counts, labels=species_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.75)
-axes[0].set_title('(a) Species', weight='bold', fontsize=10)
+axes[0].set_title('(e) Species', weight='bold', fontsize=10)
 
 # Field strength pie chart
 scanner_counts = data['Scanner'].value_counts()
 axes[1].pie(scanner_counts, labels=scanner_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.70)
-axes[1].set_title('(b) Field strength', weight='bold', fontsize=10)
+axes[1].set_title('(f) Field strength', weight='bold', fontsize=10)
 
 # Sequence type pie chart
 sequences_data = data['Sequences'].str.split(', ', expand=True)
 sequences_melted = sequences_data.melt(value_name='Sequence').dropna()['Sequence']
 sequence_counts = sequences_melted.value_counts()
 axes[2].pie(sequence_counts, labels=sequence_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.65)
-axes[2].set_title('(c) Sequence type', weight='bold', fontsize=10)
+axes[2].set_title('(g) Sequence type', weight='bold', fontsize=10)
 
 # Data format pie chart
 format_counts = data['Data format'].value_counts()
 axes[3].pie(format_counts, labels=format_counts.index, autopct='%1.1f%%', startangle=180)
-axes[3].set_title('(d) Data format', weight='bold', fontsize=10)
+axes[3].set_title('(h) Data format', weight='bold', fontsize=10)
 
 # Turn off axes for all subplots
 for ax in axes:

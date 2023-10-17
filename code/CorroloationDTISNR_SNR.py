@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Step 1: Read three CSV files
-path = r"Z:\2023_Kalantari_AIDAqc\outputs\figs"  # Use a raw string (r) to avoid escape characters
+path = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs"  # Use a raw string (r) to avoid escape characters
 func_df = pd.read_csv(os.path.join(path, 'combined_data_func.csv'))
 struct_df = pd.read_csv(os.path.join(path, 'combined_data_struct.csv'))
 anat_df = pd.read_csv(os.path.join(path, 'combined_data_anat.csv'))
@@ -62,15 +62,20 @@ plt.rcParams['font.family'] = 'Times New Roman'
 
 # Create the plot
 
-fig, ax = plt.subplots(figsize=(4.5*cm, 5*cm), dpi=300)
+#fig, ax = plt.subplots(figsize=(4.5*cm, 5*cm), dpi=300)
 
 # Use Seaborn's scatterplot function
-sns.scatterplot(x='Average SNR Chang', y='Average tSNR (Averaged Brain ROI)',
-                data=result_df, palette='Set2', s=10)
+h = 5*cm
+width = 9*cm
+aspect = width/h 
+sns.lmplot(x='Average SNR Chang', y='Average tSNR (Averaged Brain ROI)',
+                data=result_df, palette='Set2',height=h,aspect = aspect,ci=100,scatter_kws={'s': 8,'color': '#4C72B0','edgecolor':'w','linewidths':.3},line_kws={'lw': 2, 'color': '#4682b4'})
+plt.rcParams['figure.dpi'] = 300
 
 plt.xlabel('Anatomical SNR standard (dB)', fontsize=8)
 plt.ylabel('Structural SNR standard (dB)', fontsize=8)
 
+ax = plt.gca()
 # Set font size for tick labels
 ax.tick_params(axis='both', which='both', labelsize=8)
 
@@ -90,5 +95,5 @@ ax.yaxis.grid(True, linestyle='--', which='minor', color='gray', linewidth=0.5)
 ax.xaxis.grid(True, linestyle='-', which='major', color='gray', linewidth=0.5)
 ax.xaxis.grid(True, linestyle='--', which='minor', color='gray', linewidth=0.5)
 ax.tick_params(axis='both', which='both', width=0.5,color='gray',length=2)
-ax.set_title("(d) SNR struct vs anat",weight='bold',fontsize=10)
+ax.set_title("(b) SNR structural vs anatomical",weight='bold',fontsize=10)
 plt.show()
