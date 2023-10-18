@@ -14,14 +14,14 @@ from statsmodels.stats.inter_rater import fleiss_kappa
 from statsmodels.stats.inter_rater import aggregate_raters
 from ConfusionMatrix_getter import *
 
-path = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation\*/"
+path = r"C:\Users\aswen\Desktop\Code\Validation\*/"
 
 List_folders = glob.glob(path)
 
 Result = []
 
 Sequence = ["anatomical","structural","functional"]
-Voting_threshold = [1,2,3]
+Voting_threshold = [1,2,3,4,5]
 ErrorAll = []
 for v in Voting_threshold:
     for L in List_folders:
@@ -52,7 +52,7 @@ for v in Voting_threshold:
             ax.set_yticklabels(['bad', 'good'], fontname='Times New Roman')
             plt.show()
 ResultD = pd.DataFrame(Result)  
-ResultD.to_excel(r"C:\Users\arefk\OneDrive\Desktop\Projects\Results.xlsx", engine='xlsxwriter')  
+ResultD.to_excel(r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_results2.xlsx")  
 #%% All together
 
 import glob
@@ -70,7 +70,7 @@ from statsmodels.stats.inter_rater import fleiss_kappa
 from statsmodels.stats.inter_rater import aggregate_raters, aggregate_raters
 #from ConfusionMatrix_getter import *
 
-path =  r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\94_m_We"
+path =  r"C:\Users\aswen\Desktop\Code\Validation\94_r_We"
 
 Sequence = "anatomical"
 Voting_threshold = 1
