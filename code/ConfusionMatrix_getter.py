@@ -69,7 +69,7 @@ def calculate_confusion_matrix(path, Sequence, Voting_threshold):
         print("\n "+"value Error, no kappa could be calculated for:")
         print(path + Sequence)
         Errors.append(path + Sequence)
-        kappa = 0
+        kappa = np.nan
 
     
     
@@ -148,6 +148,8 @@ def calculate_confusion_matrix(path, Sequence, Voting_threshold):
     else:
         f1_score = 2 * (precision * recall) / (precision + recall)    
     
+    if np.isnan(kappa) and f1_score == 0:
+        f1_score=np.nan
     
     confusion_matrix = [[afs_percent_TP, afs_percent_FN],
                          [afs_percent_FP, afs_percent_TN]]

@@ -36,7 +36,7 @@ def compare_and_plot(data, column_name, group_column):
     plt.show()
 
 #% List of CSV files for each data type
-Path = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation"
+Path = r"C:\Users\aswen\Desktop\Code\Validation"
 
 anatomical_files = glob.glob(os.path.join(Path,"**/*caculated_features_anatomical.csv"), recursive=True)
 structural_files = glob.glob(os.path.join(Path,"**/*caculated_features_structural.csv"), recursive=True)

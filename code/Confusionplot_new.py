@@ -52,7 +52,7 @@ for v in Voting_threshold:
             ax.set_yticklabels(['bad', 'good'], fontname='Times New Roman')
             plt.show()
 ResultD = pd.DataFrame(Result)  
-ResultD.to_excel(r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_results2.xlsx")  
+ResultD.to_excel(r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_results.xlsx")  
 #%% All together
 
 import glob
