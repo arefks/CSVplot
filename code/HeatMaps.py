@@ -5,7 +5,9 @@ import matplotlib.font_manager as fm
 import matplotlib.ticker as ticker
 
 # Load your Excel file into a Pandas DataFrame
-excel_file = r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_results.xlsx"
+#excel_file = r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_results.xlsx"
+excel_file = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_resultsTemp.xlsx"
+
 df = pd.read_excel(excel_file)
 
 # Set the user-defined threshold value

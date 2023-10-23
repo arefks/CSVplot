@@ -14,8 +14,8 @@ from statsmodels.stats.inter_rater import fleiss_kappa
 from statsmodels.stats.inter_rater import aggregate_raters
 from ConfusionMatrix_getter import *
 
-path = r"C:\Users\aswen\Desktop\Code\Validation\*/"
-
+#path = r"C:\Users\aswen\Desktop\Code\Validation\*/"
+path = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation\*/"
 List_folders = glob.glob(path)
 
 Result = []
@@ -52,7 +52,7 @@ for v in Voting_threshold:
             ax.set_yticklabels(['bad', 'good'], fontname='Times New Roman')
             plt.show()
 ResultD = pd.DataFrame(Result)  
-ResultD.to_excel(r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_results.xlsx")  
+ResultD.to_excel(r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_resultsTemp.xlsx")  
 #%% All together
 
 import glob

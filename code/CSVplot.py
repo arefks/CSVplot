@@ -36,7 +36,7 @@ def compare_and_plot(data, column_name, group_column):
     plt.show()
 
 #% List of CSV files for each data type
-Path = r"C:\Users\aswen\Desktop\Code\Validation"
+Path = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation"
 
 anatomical_files = glob.glob(os.path.join(Path,"**/*caculated_features_anatomical.csv"), recursive=True)
 structural_files = glob.glob(os.path.join(Path,"**/*caculated_features_structural.csv"), recursive=True)
@@ -124,7 +124,7 @@ for dd,data in enumerate(All_Data):
             for dots in ax.collections[old_len_collections:]:
                 dots.set_offsets(dots.get_offsets() + np.array([0.12, 0]))
             ax.set_xlim(xlim)
-            ax.set_ylim(ylim)
+            ax.set_ylim(15,75)
             ax.legend_.remove()
             ax
             ax.set_xticklabels(ax.get_xticklabels(), rotation=45,fontsize=8)
@@ -154,7 +154,7 @@ for dd,data in enumerate(All_Data):
 #%% Data statistics figure 6
 
 
-p_address = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation\AIDAqc_Testdaten.csv"
+p_address = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs\AIDAqc_Testdaten_PieChart.csv"
 p_save = r"X:\Student_projects\14_Aref_Kalantari_2021\Projects\QC\PieChart"
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -183,24 +183,24 @@ fig, axes = plt.subplots(1, 4, figsize=(22.62*cm,100*cm), dpi=300)
 # Species pie chart
 species_counts = data['Species'].value_counts()
 axes[0].pie(species_counts, labels=species_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.75)
-axes[0].set_title('(e) Species', weight='bold', fontsize=10)
+axes[0].set_title('(a) Species', weight='bold', fontsize=10)
 
 # Field strength pie chart
 scanner_counts = data['Scanner'].value_counts()
 axes[1].pie(scanner_counts, labels=scanner_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.70)
-axes[1].set_title('(f) Field strength', weight='bold', fontsize=10)
+axes[1].set_title('(b) Field strength', weight='bold', fontsize=10)
 
 # Sequence type pie chart
 sequences_data = data['Sequences'].str.split(', ', expand=True)
 sequences_melted = sequences_data.melt(value_name='Sequence').dropna()['Sequence']
 sequence_counts = sequences_melted.value_counts()
 axes[2].pie(sequence_counts, labels=sequence_counts.index, autopct='%1.1f%%', startangle=180, pctdistance=0.65)
-axes[2].set_title('(g) Sequence type', weight='bold', fontsize=10)
+axes[2].set_title('(c) Sequence type', weight='bold', fontsize=10)
 
 # Data format pie chart
 format_counts = data['Data format'].value_counts()
 axes[3].pie(format_counts, labels=format_counts.index, autopct='%1.1f%%', startangle=180)
-axes[3].set_title('(h) Data format', weight='bold', fontsize=10)
+axes[3].set_title('(d) Data format', weight='bold', fontsize=10)
 
 # Turn off axes for all subplots
 for ax in axes:
@@ -381,25 +381,24 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as stats
 import numpy as np
+import os
 
 
 cm = 1/2.54  # centimeters in inches
 # Specify the path to your Excel file
-excel_file_path = r"Z:\2023_Kalantari_AIDAqc\outputs\QC_Final\validation\Chang&normal_all.xlsx"
+excel_file_path = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs\combined_data_anat.csv"
 plt.figure(figsize=(10*cm,10*cm),dpi=300)
 # Read the data into a pandas DataFrame
-df = pd.read_excel(excel_file_path, engine='openpyxl')
+df = pd.read_csv(excel_file_path)
 
 # Drop rows with NaN values in the specified columns
 #df = df.dropna(subset=['SNR-Chang (dB)', 'SNR-Standard (dB)'])
 
-df['SNR-Chang'] = df['SNR-Chang'].apply(lambda x: np.power(10,x/20))
-df['SNR-Standard'] = df['SNR-Standard'].apply(lambda x: np.power(10,x/20))
+df['SNR Chang'] = df['SNR Chang'].apply(lambda x: np.power(10,x/20))
+df['SNR Normal'] = df['SNR Normal'].apply(lambda x: np.power(10,x/20))
+df['names'] = df['FileAddress'].apply(lambda x:x.split("mri")[1].split(os.path.sep)[1])
 
-df = df.sort_values('sort')
 
-
-filtered_df = df[df['Dataset'].isin(['94_m_We', '94_m_Va'])]
 
 plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['font.size'] = 8
@@ -407,7 +406,7 @@ plt.title("All anatomical data",weight='bold', fontsize=10)
 
 # Calculate the correlation and p-value between 'SNR-Chang' and 'SNR-Standard'
 #correlation, p_value = stats.pearsonr(df['SNR-Chang (dB)'], df['SNR-Standard (dB)'])
-correlation, p_value = stats.spearmanr(df['SNR-Chang'], df['SNR-Standard'], nan_policy='omit',alternative='two-sided')
+correlation, p_value = stats.spearmanr(df['SNR Chang'], df['SNR Normal'], nan_policy='omit',alternative='two-sided')
 
 # Set seaborn style
 sns.set_style('whitegrid')
@@ -415,7 +414,7 @@ sns.set_style('whitegrid')
 
 # Create a scatter plot
 #ax=sns.scatterplot(data=df, x='SNR-Chang', y='SNR-Standard',palette="gray_r",s=7)
-ax=sns.scatterplot(data=df, x='SNR-Chang', y='SNR-Standard',hue="Dataset",palette="Spectral_r",s=7)
+ax=sns.scatterplot(data=df, x='SNR Chang', y='SNR Normal',hue="names",palette="Spectral_r",s=7)
 ax.set_title("All anatomical data", weight='bold', fontsize=11)
 
 
@@ -427,6 +426,8 @@ plt.xlabel('SNR-Chang')
 plt.ylabel('SNR-Standard')
 
 ax.set_xlim(0,200)
+ax.set_ylim(0,140)
+
 ax.spines['top'].set_linewidth(0)  # Top border
 ax.spines['right'].set_linewidth(0)  # Right border
 ax.spines['bottom'].set_linewidth(0.5)  # Bottom border
