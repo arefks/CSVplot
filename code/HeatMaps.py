@@ -3,10 +3,12 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import matplotlib.ticker as ticker
+import os
 
 # Load your Excel file into a Pandas DataFrame
-#excel_file = r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_results.xlsx"
-excel_file = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_resultsTemp.xlsx"
+excel_file = r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_results.xlsx"
+#excel_file = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs\Kappa_and_F1Score_resultsTemp.xlsx"
+Save = "yes"
 
 df = pd.read_excel(excel_file)
 
@@ -57,7 +59,10 @@ for i, metric in enumerate(['Kappa', 'F1_score']):
         text.set_font("Times New Roman")
         text.set_size(8)
         
-        
+
 # Show the plots
 plt.tight_layout()
+
+if Save == "yes":
+    plt.savefig(os.path.join(os.path.dirname(excel_file),"SVG_HEATMAP.svg"))        
 plt.show()

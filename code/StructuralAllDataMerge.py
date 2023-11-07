@@ -3,7 +3,7 @@ import glob
 import pandas as pd
 
 # Step 1: Define the starting path and file pattern
-start_path = r"C:\Users\arefk\OneDrive\Desktop\Projects\Validation"
+start_path = r"C:\Users\aswen\Desktop\Code\Validation2"
 file_pattern = '*structu*.csv'
 
 # Step 2: Find all matching CSV files in the specified directory and its subdirectories
@@ -43,5 +43,5 @@ print(f"Mean Displacement Factor: {mean_displacement_factor}")
 print(f"Standard Deviation Displacement Factor: {std_displacement_factor}")
 
 # Optionally, you can save the combined DataFrame to a CSV file
-p = r"Z:\2023_Kalantari_AIDAqc\outputs\figs"
-combined_df.to_csv(os.path.join(p,'combined_data_struct.csv'), index=False)
+p = r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs"
+combined_df.to_csv(os.path.join(p,'combined_data_struct_new.csv'))

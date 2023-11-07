@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Step 1: Read three CSV files
-path = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs"  # Use a raw string (r) to avoid escape characters
+path = r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs"  # Use a raw string (r) to avoid escape characters
 func_df = pd.read_csv(os.path.join(path, 'combined_data_func.csv'))
 struct_df = pd.read_csv(os.path.join(path, 'combined_data_struct.csv'))
 anat_df = pd.read_csv(os.path.join(path, 'combined_data_anat.csv'))
@@ -51,7 +51,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 from scipy.stats import spearmanr
-
+Save = "yes"
 # Calculate the correlation coefficient and p-value
 corr, p_value = pearsonr(result_df['Average SNR Chang'], result_df['Average tSNR (Averaged Brain ROI)'])
 # corr, p_value = spearmanr(result_df['Average SNR Chang'], result_df['Average tSNR (Averaged Brain ROI)'])
@@ -81,10 +81,6 @@ plt.ylabel('Functional tSNR (dB)', fontsize=8)
 plt.xticks(fontsize=8)
 plt.yticks(fontsize=8)
 
-# Add correlation coefficient and p-value to the plot
-# plt.text(0.1, 0.9, f'r: {corr:.2f}', transform=plt.gca().transAxes, fontsize=8)
-# plt.text(0.1, 0.85, f'p-value: {p_value:}', transform=plt.gca().transAxes, fontsize=8)
-
 # Remove right and upper borders
 ax = plt.gca()
 ax.spines['top'].set_visible(False)
@@ -103,4 +99,10 @@ ax.xaxis.grid(True, linestyle='-', which='major', color='gray', linewidth=0.5)
 ax.xaxis.grid(True, linestyle='--', which='minor', color='gray', linewidth=0.5)
 ax.tick_params(axis='both', which='both', width=0.5,color='gray',length=2)
 ax.set_title("(a) tSNR functional vs SNR anatomical",weight='bold',fontsize=10)
+ax.set_ylim(10,38)
+plt.tight_layout()
+
+if Save == "yes":
+    plt.savefig(os.path.join(os.path.dirname(path),"SVG_tSNRvsSNRanat.svg"))        
+
 plt.show()

@@ -1,8 +1,9 @@
 import pandas as pd
 import os
+import numpy as np
 
 # Step 1: Read three CSV files
-path = r"C:\Users\arefk\OneDrive\Desktop\Projects\2023_Kalantari_AIDAqc\outputs\files_4figs"  # Use a raw string (r) to avoid escape characters
+path = r"C:\Users\aswen\Desktop\Code\2023_Kalantari_AIDAqc\outputs\files_4figs"  # Use a raw string (r) to avoid escape characters
 func_df = pd.read_csv(os.path.join(path, 'combined_data_func.csv'))
 struct_df = pd.read_csv(os.path.join(path, 'combined_data_struct.csv'))
 anat_df = pd.read_csv(os.path.join(path, 'combined_data_anat.csv'))
@@ -14,11 +15,12 @@ anat_df.sort_values(by='FileAddress', inplace=True)
 
 # Step 5: Process the FileAddress column
 def process_file_address(file_address):
-    elements = file_address.split('\\')  # Use '\\' to split on backslash
+    elements = file_address.split('\\')  
     return '\\'.join(elements[:-1])  # Use '\\' to join elements with backslash
 
 struct_df['FileAddress'] = struct_df['FileAddress'].apply(process_file_address)
 anat_df['FileAddress'] = anat_df['FileAddress'].apply(process_file_address)
+
 
 # Step 6: Create a new dataframe
 common_file_addresses = set(anat_df['FileAddress']).intersection(set(struct_df['FileAddress']))
@@ -27,7 +29,7 @@ result_data = []
 for file_address in common_file_addresses:
     anat_rows = anat_df[anat_df['FileAddress'] == file_address]
     struct_rows = struct_df[struct_df['FileAddress'] == file_address]
-    
+  
     # Calculate the average of 'SNR Chang' and 'tSNR (Averaged Brain ROI)' values, ignoring NaNs
     avg_snr_chang = anat_rows['SNR Normal'].mean()
     avg_tsnr_avg_brain_roi = struct_rows['SNR Normal'].mean()
@@ -50,7 +52,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 from scipy.stats import spearmanr
 
-
+Save = "yes"
 # Calculate the Spearman correlation coefficient and p-value
 corr, p_value = spearmanr(result_df['Average SNR Chang'], result_df['Average tSNR (Averaged Brain ROI)'])
 
@@ -74,6 +76,8 @@ plt.rcParams['figure.dpi'] = 300
 
 plt.xlabel('Anatomical SNR standard (dB)', fontsize=8)
 plt.ylabel('Structural SNR standard (dB)', fontsize=8)
+plt.xticks(fontsize=8)
+plt.yticks(fontsize=8)
 
 ax = plt.gca()
 # Set font size for tick labels
@@ -96,4 +100,11 @@ ax.xaxis.grid(True, linestyle='-', which='major', color='gray', linewidth=0.5)
 ax.xaxis.grid(True, linestyle='--', which='minor', color='gray', linewidth=0.5)
 ax.tick_params(axis='both', which='both', width=0.5,color='gray',length=2)
 ax.set_title("(b) SNR structural vs anatomical",weight='bold',fontsize=10)
+ax.set_ylim(10,38)
+plt.tight_layout()
+if Save == "yes":
+    plt.savefig(os.path.join(os.path.dirname(path),"SVG_DTISNRvsSNRanat.svg"))        
+
 plt.show()
+
+
